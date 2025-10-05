@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuditLogRequest {
+public class AuditLogRequestDTO {
     @NotNull(message = "eventType is mandatory")
     private String eventType;
 

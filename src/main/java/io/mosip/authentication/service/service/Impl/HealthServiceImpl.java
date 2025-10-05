@@ -1,6 +1,7 @@
 package io.mosip.authentication.service.service.Impl;
 
-import io.mosip.authentication.service.dto.response.HealthDetails;
+import io.mosip.authentication.service.dto.response.HealthDetailsResponseDTO;
+import io.mosip.authentication.service.entity.Metadata;
 import io.mosip.authentication.service.service.HealthService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,16 +27,14 @@ public class HealthServiceImpl implements HealthService {
     private boolean simulateDown;
 
     @Override
-    public HealthDetails getHealthDetails() {
+    public HealthDetailsResponseDTO getHealthDetails() {
         String status = simulateDown ? "DOWN" : "UP";
-        HealthDetails.Metadata metadata = new HealthDetails.Metadata(serviceName, version, environment);
-        return new HealthDetails(status, Instant.now(), metadata, someConfig);
+        Metadata metadata = new Metadata(serviceName, version, environment);
+        return new HealthDetailsResponseDTO(status, Instant.now(), metadata, someConfig);
     }
 
     @Override
     public boolean isServiceDown() {
         return simulateDown;
     }
-
-
 }

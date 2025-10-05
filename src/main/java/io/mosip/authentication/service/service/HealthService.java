@@ -1,7 +1,8 @@
 package io.mosip.authentication.service.service;
-import io.mosip.authentication.service.dto.response.HealthDetails;
+import io.mosip.authentication.service.dto.response.HealthDetailsResponseDTO;
 
 public interface HealthService {
-    HealthDetails getHealthDetails();
+    HealthDetailsResponseDTO getHealthDetails();
+
     boolean isServiceDown();
 }

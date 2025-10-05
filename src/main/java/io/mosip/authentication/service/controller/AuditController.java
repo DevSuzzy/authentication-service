@@ -7,8 +7,8 @@ import io.mosip.authentication.core.constant.AuditModules;
 import io.mosip.authentication.core.constant.IdAuthCommonConstants;
 
 import io.mosip.authentication.core.util.DataValidationUtil;
-import io.mosip.authentication.service.dto.request.AuditLogRequest;
-import io.mosip.authentication.service.dto.response.AuditLogResponse;
+import io.mosip.authentication.service.dto.request.AuditLogRequestDTO;
+import io.mosip.authentication.service.dto.response.AuditLogResponseDTO;
 import io.mosip.authentication.core.dto.ObjectWithMetadata;
 import io.mosip.authentication.core.exception.IDDataValidationException;
 import io.mosip.authentication.core.exception.IdAuthenticationAppException;
@@ -65,29 +65,29 @@ public class AuditController {
         @ApiResponse(responseCode = "401", description = "Unauthorized"),
         @ApiResponse(responseCode = "403", description = "Forbidden")
     })
-    public AuditLogResponse logEvent(@Validated @RequestBody AuditLogRequest auditLogRequest, Errors errors, HttpServletRequest request)
+    public AuditLogResponseDTO logEvent(@Validated @RequestBody AuditLogRequestDTO auditLogRequestDTO, Errors errors, HttpServletRequest request)
             throws IdAuthenticationAppException, IDDataValidationException {
         if (request instanceof ObjectWithMetadata) {
             ObjectWithMetadata requestWithMetadata = (ObjectWithMetadata) request;
             try {
                 DataValidationUtil.validate(errors);
-                AuditLogResponse response = auditService.logEvent(auditLogRequest);
+                AuditLogResponseDTO response = auditService.logEvent(auditLogRequestDTO);
                 String idType = "UIN"; // Default to UIN; adjust if needed
-                String description = auditLogRequest.getDescription() != null ? auditLogRequest.getDescription() : "Audit event logged";
+                String description = auditLogRequestDTO.getDescription() != null ? auditLogRequestDTO.getDescription() : "Audit event logged";
                 auditHelper.audit(AuditModules.AUDIT_LOG, AuditEvents.AUDIT_REQUEST_RESPONSE,
-                        auditLogRequest.getUserId(), idType, description);
+                        auditLogRequestDTO.getUserId(), idType, description);
                 return response;
             } catch (IDDataValidationException e) {
                 mosipLogger.error(IdAuthCommonConstants.SESSION_ID, this.getClass().getSimpleName(),
                         "logEvent", e.getErrorCode() + " : " + e.getErrorText());
                 auditHelper.audit(AuditModules.AUDIT_LOG, AuditEvents.AUDIT_REQUEST_RESPONSE,
-                        auditLogRequest.getUserId(), "UIN", e);
+                        auditLogRequestDTO.getUserId(), "UIN", e);
                 throw e;
             } catch (Exception e) {
                 mosipLogger.error(IdAuthCommonConstants.SESSION_ID, this.getClass().getSimpleName(),
                         "logEvent", e.getMessage());
                 auditHelper.audit(AuditModules.AUDIT_LOG, AuditEvents.AUDIT_REQUEST_RESPONSE,
-                        auditLogRequest.getUserId(), "UIN",
+                        auditLogRequestDTO.getUserId(), "UIN",
                         new IdAuthenticationAppException("IDA-MLC-009", "Unable to process audit log request", e));
                 throw new IdAuthenticationAppException("IDA-MLC-009", "Unable to process audit log request", e);
             }

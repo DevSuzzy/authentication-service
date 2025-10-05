@@ -1,10 +1,7 @@
 package io.mosip.authentication.service.controller;
 
-import io.mosip.authentication.core.constant.IdAuthenticationErrorConstants;
-
-import io.mosip.authentication.core.exception.IdAuthenticationAppException;
-
-import io.mosip.authentication.service.dto.response.HealthDetails;
+import io.mosip.authentication.service.dto.response.HealthDetailsResponseDTO;
+import io.mosip.authentication.service.entity.Metadata;
 import io.mosip.authentication.service.service.HealthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +27,11 @@ public class HealthControllerTest {
 
     @Test
     void getHealthDetails_up() throws Exception {
-        HealthDetails details = new HealthDetails("UP", Instant.now(),
-                new HealthDetails.Metadata("id-authentication-service", "1.2.1.0", "dev"), "true");
+        Metadata metadata = new Metadata("id-authentication-service", "1.2.1.0", "dev");
+
+        HealthDetailsResponseDTO details = new HealthDetailsResponseDTO(
+                "UP", Instant.now(), metadata, "true");
+
         when(healthService.getHealthDetails()).thenReturn(details);
         when(healthService.isServiceDown()).thenReturn(false);
 
@@ -44,7 +44,6 @@ public class HealthControllerTest {
     @Test
     void getHealthDetails_down() throws Exception {
         when(healthService.isServiceDown()).thenReturn(true);
-        when(healthService.getHealthDetails()).thenThrow(new IdAuthenticationAppException());
 
         mockMvc.perform(get("/api/v1/health/details"))
                 .andExpect(status().isServiceUnavailable());

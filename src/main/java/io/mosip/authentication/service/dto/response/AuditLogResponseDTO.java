@@ -12,7 +12,7 @@ import java.time.Instant;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuditLogResponse {
+public class AuditLogResponseDTO {
     private String eventId;
     private Instant timestamp;
 
