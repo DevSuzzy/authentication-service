@@ -20,8 +20,8 @@ public class HealthServiceImpl implements HealthService {
     @Value("${mosip.id.auth.environment}")
     private String environment;
 
-    @Value("${mosip.id.auth.someConfig}")
-    private String someConfig;
+    @Value("${mosip.id.auth.appConfig}")
+    private String appConfig;
 
     @Value("${mosip.health.simulateDown:false}")
     private boolean simulateDown;
@@ -30,7 +30,7 @@ public class HealthServiceImpl implements HealthService {
     public HealthDetailsResponseDTO getHealthDetails() {
         String status = simulateDown ? "DOWN" : "UP";
         Metadata metadata = new Metadata(serviceName, version, environment);
-        return new HealthDetailsResponseDTO(status, Instant.now(), metadata, someConfig);
+        return new HealthDetailsResponseDTO(status, Instant.now(), metadata, appConfig);
     }
 
     @Override
